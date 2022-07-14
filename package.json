@@ -1,0 +1,19 @@
+{
+  "name": "yt-playlist-syncer",
+  "version": "1.0.0",
+  "description": "Save playlists in case videos go missing",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bowserinator",
+  "license": "MIT",
+  "dependencies": {
+    "gm": "^1.23.1",
+    "n-readlines": "^1.0.1",
+    "node-fetch": "^3.2.8",
+    "ytdl-core": "^4.11.0",
+    "ytpl": "^2.3.0"
+  },
+  "type": "module"
+}
