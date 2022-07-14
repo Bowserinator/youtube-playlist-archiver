@@ -16,6 +16,10 @@ const VIEWS = 4;
 const AUTHOR = 5;
 const AUTHOR_ID = 6;
 const VIDEO_COUNT = 7;
+const DELETED_VIDEOS = 8;
+const DURATION = 9;
+const LAST_SYNC = 10;
+
 
 /**
  * A playlist class where data can be read
@@ -40,6 +44,9 @@ export default class Playlist {
         this.videos = [];
         this.videoIDs = new Set();
         this.videoMap = {};
+        this.deletedVideoCount = 0;
+        this.duration = '0:00';
+        this.lastSync = 0;
         this.load();
     }
 
@@ -97,7 +104,10 @@ export default class Playlist {
             this.views,
             this.author,
             this.authorID,
-            this.videoCount
+            this.videoCount,
+            this.deletedVideoCount,
+            this.duration,
+            this.lastSync
         ]);
         return r.substring(1, r.length - 1);
     }
@@ -116,6 +126,9 @@ export default class Playlist {
         this.author = r[AUTHOR];
         this.authorID = r[AUTHOR_ID];
         this.videoCount = r[VIDEO_COUNT];
+        this.deletedVideoCount = r[DELETED_VIDEOS];
+        this.duration = r[DURATION];
+        this.lastSync = r[LAST_SYNC];
     }
 
     /**
@@ -158,7 +171,8 @@ export default class Playlist {
                 video.update(vi);
                 signale.debug({ prefix: '  ', message: `New video: id ${id}` });
                 if (config.saveFancyMetadata)
-                    video.update(await ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`));
+                    video.update(await ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`,
+                        { requestOptions: { headers: { cookie: config.cookies } } }));
             } else
                 signale.debug({ prefix: '  ', message: `Already have video id: ${id}, skipping...` });
 
@@ -166,12 +180,15 @@ export default class Playlist {
         }
 
         // Add removed videos
+        this.deletedVideoCount = this.videoIDs.size;
         for (let id of this.videoIDs) {
             this.videoMap[id].removed = 1;
             this.videos.push(this.videoMap[id]);
         }
 
         this.videoCount = this.videos.length;
+        this.duration = this.videos.reduce((a, b) => a.durationSec + b.durationSec);
+        this.lastSync = Date.now();
         await this.save();
     }
 }

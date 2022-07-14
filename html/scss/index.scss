@@ -92,6 +92,7 @@ hr {
 
     .left {
         background-color: $left-bg-color;
+        overflow-y: auto;
     }
 }
 

@@ -34,20 +34,25 @@
     <div class="container">
         <div class="left">
             <div class="duration-wrapper">
-                <img class="thumbnail-large" src="https://www.wepc.com/wp-content/uploads/2022/05/Genshin-Impact-Yae-Miko.png">
-                <span class="duration">1:24</span>
+                <img class="thumbnail-large" id="video-thumbnail"
+                    src="https://www.wepc.com/wp-content/uploads/2022/05/Genshin-Impact-Yae-Miko.png"
+                    onerror="this.src='img/missing-video.jpg'">
+                <span class="duration" id="video-duration">1:24</span>
             </div>
 
-            <h2 class="video-title">Video title goes here</h2>
-            <p class="original-video-link" class="small"><a href="">Original video</a></p>
+            <h2 id="video-title" class="video-title">Video title goes here</h2>
+            <p class="original-video-link small"><a id="video-link" href="">Original video</a></p>
 
-            <img class="channel-img" src="https://www.wepc.com/wp-content/uploads/2022/05/Genshin-Impact-Yae-Miko.png">
-            <div class="channel-name"><a href=""><b>ChannelName</b></a></div>
+            <img id="channel-img" class="channel-img"
+                src="https://www.wepc.com/wp-content/uploads/2022/05/Genshin-Impact-Yae-Miko.png"
+                onerror="this.src='img/missing-channel.jpg'">
+            <div class="channel-name"><b><a href="" id="channel-name">ChannelName</a></b></div>
 
-            <p class="muted small">
+            <p class="muted small" id="video-data">
                 100 views • Uploaded Oct 13 1624 • 10 likes
             </p>
-            <p class="small">
+            <hr>
+            <p class="small" id="video-desc">
                 Song: Colorful Dreams! Colorful Smiles!<br>
                 Anime TV Anime Nijigasaki High School Idol Club's Season 2 Opening Song<br>
                 ______________________________<br>
@@ -137,5 +142,7 @@
             </div>
         </div>
     </div>
+
+    <script src="js/index.js"></script>
 </body>
 </html>
