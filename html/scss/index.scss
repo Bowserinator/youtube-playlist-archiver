@@ -1,12 +1,32 @@
+// Sizes
 $channel-thumb-height: 36px;
 $navbar-height: 56px;
 $input-height: 40px;
-$max-channel-name-width: calc(100vw - 600px); // Kinda bs but it works
+
+// Original youtube thumbnails were 120x67, we make it smaller but keep ratio
+$playlist-item-thumbnail-height: 60px;
+$playlist-item-thumbnail-width: calc($playlist-item-thumbnail-height * 120 / 67);
+
+// Value chosen kinda arbritrarily, but is at least 350px + 2 * right padding + playlist thumbnail width
+$max-channel-name-width: calc(100vw - 600px);
+
+// Colors:
+$bg-color: rgb(15, 15, 15);
+$nav-color: rgb(46, 46, 46);
+$muted-text-color: rgb(170, 170, 170);
+$border-color: rgba(255, 255, 255, 0.1);
+$left-bg-color: rgb(24, 24, 24);
+$input-bg: rgb(18, 18, 18);
+$input-border-color: rgb(48, 48, 48);
+$hover-bg-color: rgb(55, 55, 55);
+$link-color: #548aff;
+$link-visited-color: #bc8fff;
+
 
 // Stolen from youtube
 body {
     font-family: Roboto, Arial, sans-serif;
-    background-color: rgb(15, 15, 15);
+    background-color: $bg-color;
     color: white;
     margin: 0;
     padding: 0;
@@ -18,11 +38,16 @@ nav {
     position: sticky;
     top: 0;
     box-sizing: border-box;
-    background-color: rgb(46, 46, 46);
+    background-color: $nav-color;
+    z-index: 9999;
 
     img {
         height: $navbar-height;
         margin: 0 20px;
+    }
+    
+    .logo-link {
+        text-decoration: none;
     }
 
     input[type=text] {
@@ -32,30 +57,29 @@ nav {
 }
 
 // Basic element styling
-.muted { color: rgb(170, 170, 170); }
+.muted { color: $muted-text-color; }
 .small { font-size: 14px; }
 
 h1, h2, h3, h4, h5 { font-weight: normal; }
 
 a {
-    color: #548aff;
+    color: $link-color;
 
     &:visited {
-        color: #bc8fff;
+        color: $link-visited-color;
     }
 }
 
 hr {
     height: 0;
     border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid $border-color;
 }
 
 // Stack stuff normally
 .container {
     display: flex;
     flex-direction: column;
-    width: 100vw;
 
     .left, .right {
         padding: 24px;
@@ -67,7 +91,7 @@ hr {
     }
 
     .left {
-        background-color: rgb(24, 24, 24);
+        background-color: $left-bg-color;
     }
 }
 
@@ -88,6 +112,10 @@ hr {
     }
 }
 
+// Specific case since these are side by side
+.video-title { margin-bottom: 0; }
+.original-video-link { margin-top: 4px; }
+
 // Search input
 input[type=text] {
     height: $input-height;
@@ -95,8 +123,8 @@ input[type=text] {
     padding: 6px 6px;
 
     outline: none;
-    background-color: rgb(18, 18, 18);
-    border: 1px solid rgb(48, 48, 48);
+    background-color: $input-bg;
+    border: 1px solid $input-border-color;
     font-family: Roboto, Arial, sans-serif;
     font-size: 16px;
     color: white;
@@ -105,7 +133,7 @@ input[type=text] {
     max-width: calc(100vw - 200px); // guess
 
     &:focus {
-        border: 1px solid #45b1ff;
+        border: 1px solid $link-color;
     }
 }
 
@@ -114,7 +142,7 @@ input[type=text] {
     display: flex;
     flex-direction: row;
     padding: 12px 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid $border-color;
     transition: background-color 0.2s;
     cursor: pointer;
 
@@ -123,7 +151,7 @@ input[type=text] {
     }
 
     &:hover {
-        background-color: rgb(55, 55, 55);
+        background-color: $hover-bg-color;
     }
 
     .text {
@@ -133,8 +161,13 @@ input[type=text] {
 
         h3 { margin: 0; }
 
-        h3, small {
+        // Only applies on large screens
+        @media only screen and (min-width: 600px) {
             max-width: $max-channel-name-width;
+        }
+        
+        h3, small {
+            max-width: calc(100vw - $playlist-item-thumbnail-width - 100px);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -170,8 +203,8 @@ input[type=text] {
 }
 
 .thumbnail {
-    height: 60px;
-    width: 107px;
+    height: $playlist-item-thumbnail-height;
+    width: $playlist-item-thumbnail-width;
     object-fit: contain;
     background: black;
 }
@@ -200,6 +233,13 @@ input[type=text] {
 // All playlists container
 .playlists-container {
     padding: 16px 24px;
-    max-width: $max-channel-name-width;
-    margin: 0 auto;
+    width: 90vw;
+}
+
+// Center on large screens
+@media only screen and (min-width: 1200px) {
+    .playlists-container {
+        max-width: calc($max-channel-name-width + $playlist-item-thumbnail-width);
+        margin: 0 auto;
+    }
 }
