@@ -1,0 +1,205 @@
+$channel-thumb-height: 36px;
+$navbar-height: 56px;
+$input-height: 40px;
+$max-channel-name-width: calc(100vw - 600px); // Kinda bs but it works
+
+// Stolen from youtube
+body {
+    font-family: Roboto, Arial, sans-serif;
+    background-color: rgb(15, 15, 15);
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+// Navbar
+nav {
+    height: $navbar-height;
+    position: sticky;
+    top: 0;
+    box-sizing: border-box;
+    background-color: rgb(46, 46, 46);
+
+    img {
+        height: $navbar-height;
+        margin: 0 20px;
+    }
+
+    input[type=text] {
+        vertical-align: top;
+        margin-top: calc(($navbar-height - $input-height) / 2);
+    }
+}
+
+// Basic element styling
+.muted { color: rgb(170, 170, 170); }
+.small { font-size: 14px; }
+
+h1, h2, h3, h4, h5 { font-weight: normal; }
+
+a {
+    color: #548aff;
+
+    &:visited {
+        color: #bc8fff;
+    }
+}
+
+hr {
+    height: 0;
+    border: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+// Stack stuff normally
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 100vw;
+
+    .left, .right {
+        padding: 24px;
+        box-sizing: border-box;
+    }
+
+    .right .header > h1 {
+        margin-top: 0;
+    }
+
+    .left {
+        background-color: rgb(24, 24, 24);
+    }
+}
+
+// 2 Column layout on large screens
+@media only screen and (min-width: 600px) {
+    .container {
+        flex-direction: row;
+
+        .left {
+            width: 350px;
+            height: calc(100vh - $navbar-height);
+        }
+        .right {
+            flex-grow: 1;
+            height: calc(100vh - $navbar-height);
+            overflow-y: auto;
+        }
+    }
+}
+
+// Search input
+input[type=text] {
+    height: $input-height;
+    box-sizing: border-box;
+    padding: 6px 6px;
+
+    outline: none;
+    background-color: rgb(18, 18, 18);
+    border: 1px solid rgb(48, 48, 48);
+    font-family: Roboto, Arial, sans-serif;
+    font-size: 16px;
+    color: white;
+    width: 500px;
+    border-radius: 2px;
+    max-width: calc(100vw - 200px); // guess
+
+    &:focus {
+        border: 1px solid #45b1ff;
+    }
+}
+
+// Playlist items
+.playlist-item {
+    display: flex;
+    flex-direction: row;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background-color 0.2s;
+    cursor: pointer;
+
+    &.removed {
+        opacity: 0.4;
+    }
+
+    &:hover {
+        background-color: rgb(55, 55, 55);
+    }
+
+    .text {
+        display: inline-block;
+        vertical-align: top;
+        margin-left: 16px;
+
+        h3 { margin: 0; }
+
+        h3, small {
+            max-width: $max-channel-name-width;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+}
+
+// Durations
+.duration-wrapper {
+    position: relative;
+
+    .duration {
+        display: block;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+
+        color: white;
+        background-color: black;
+        font-size: 12px;
+        font-weight: bold;
+        padding: 3px 4px;
+        border-radius: 2px;
+
+        max-width: 90%;
+        overflow: hidden;
+    }
+}
+
+// Thumbnails
+.thumbnail-large {
+    width: 100%;
+}
+
+.thumbnail {
+    height: 60px;
+    width: 107px;
+    object-fit: contain;
+    background: black;
+}
+
+.channel-img {
+    border-radius: 50%;
+    object-position: center;
+    object-fit: cover;
+    width: $channel-thumb-height;
+    height: $channel-thumb-height;
+    margin-right: 10px;
+}
+
+.channel-name {
+    vertical-align: top;
+    line-height: $channel-thumb-height;
+    display: inline-block;
+
+    // Remove link styles
+    a {
+        color: white ;
+        text-decoration: none;
+    }
+}
+
+// All playlists container
+.playlists-container {
+    padding: 16px 24px;
+    max-width: $max-channel-name-width;
+    margin: 0 auto;
+}
