@@ -1,7 +1,9 @@
-import { config } from '../config.js';
-import downloadAndResize from './thumbnail.js';
+import signale from 'signale';
 import path from 'path';
 import fs from 'fs';
+
+import { config } from '../config.js';
+import downloadAndResize from './thumbnail.js';
 
 // Array indices to store each of these properties
 const REMOVED = 0;
@@ -16,11 +18,19 @@ const UPLOAD_DATE = 8;
 const CHANNEL_ID = 9;
 
 
+/**
+ * A youtube video metadata storage
+ * @author Bowserinator
+ */
 export default class Video {
+    /**
+     * Construct a new video
+     * @param {string} id Video id
+     */
     constructor(id) {
         this.id = id;
         this.duration = 0;
-        this.author = '<Unknown Author>'
+        this.author = '<Unknown Author>';
         this.title = '<Unknown title>';
         this.description = '';
         this.likes = 0;
@@ -30,6 +40,10 @@ export default class Video {
         this.removed = 0;
     }
 
+    /**
+     * Load properties from a metadata string
+     * @param {string} str Line containing video metadata
+     */
     load(str) {
         let obj = JSON.parse(`[${str}]`);
         this.removed = obj[REMOVED];
@@ -44,6 +58,11 @@ export default class Video {
         this.channelID = obj[CHANNEL_ID] || this.channelID;
     }
 
+    /**
+     * Update metadata from ytdl.getInfo or playlist data
+     * Also downloads thumbnails + channel thumbnails if enabled
+     * @param {*} data Data from ytdl.getInfo or playlist items
+     */
     async update(data) {
         const isFullData = data.videoDetails;
         if (isFullData)
@@ -71,11 +90,11 @@ export default class Video {
             const thumb = data.thumbnails[0].url;
 
             if (!fs.existsSync(config.thumbDir)) {
-                console.info(`${config, thumbDir} doesn't exist, creating...`);
+                signale.pending({ prefix: '  ', message: `${config.thumbDir} doesn't exist, creating...` });
                 fs.mkdirSync(path.join(config.thumbDir, 'videos'), { recursive: true });
                 fs.mkdirSync(path.join(config.thumbDir, 'users'), { recursive: true });
             }
-        
+
             if (thumb)
                 downloadAndResize(thumb, config.thumbnails.width, config.thumbnails.quality,
                     path.join(config.thumbDir, 'videos', this.id + '.jpg'));
@@ -90,6 +109,10 @@ export default class Video {
         }
     }
 
+    /**
+     * Convert metadata to a string to save
+     * @return {string} Metadata str to save
+     */
     toString() {
         let obj = [
             this.removed ? 1 : 0,

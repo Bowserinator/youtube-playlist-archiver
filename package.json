@@ -12,8 +12,15 @@
     "gm": "^1.23.1",
     "n-readlines": "^1.0.1",
     "node-fetch": "^3.2.8",
+    "signale": "^1.4.0",
     "ytdl-core": "^4.11.0",
     "ytpl": "^2.3.0"
   },
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.18.2",
+    "@hellomouse/eslint-config": "^1.1.5",
+    "eslint": "^8.19.0",
+    "eslint-plugin-jsdoc": "^39.3.3"
+  }
 }

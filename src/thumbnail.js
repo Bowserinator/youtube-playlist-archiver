@@ -22,4 +22,4 @@ export default async function downloadAndResize(url, width, quality, dest) {
         .write(dest, err => {
             if (err) console.error(err);
         });
-};
+}

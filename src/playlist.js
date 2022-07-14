@@ -1,10 +1,13 @@
-import { config } from '../config.js';
 import nReadlines from 'n-readlines';
-import Video from './video.js';
+import signale from 'signale';
 import ytdl from 'ytdl-core';
 import path from 'path';
 import fs from 'fs';
 
+import Video from './video.js';
+import { config } from '../config.js';
+
+// Array indices for data storage, must match array below
 const ID = 0;
 const TITLE = 1;
 const DESC = 2;
@@ -17,8 +20,13 @@ const VIDEO_COUNT = 7;
 /**
  * A playlist class where data can be read
  * and accessed
+ * @author Bowserinator
  */
 export default class Playlist {
+    /**
+     * Construct a new playlist
+     * @param {string} id Playlist id
+     */
     constructor(id) {
         this.id = id;
         this.title = '<Unknown title>';
@@ -37,7 +45,8 @@ export default class Playlist {
 
     /**
      * Load contents from data file, or create if not already
-     * Creates dataDir if it doesn't exist
+     * Creates dataDir if it doesn't exist. Data file determined
+     * from id
      */
     load() {
         this.videos = [];
@@ -45,7 +54,7 @@ export default class Playlist {
         this.videoMap = {};
 
         if (!fs.existsSync(config.dataDir)) {
-            console.info(`${config.dataDir} doesn't exist, creating...`);
+            signale.pending({ prefix: '  ', message: `${config.dataDir} doesn't exist, creating...` });
             fs.mkdirSync(config.dataDir, { recursive: true });
         }
 
@@ -55,6 +64,7 @@ export default class Playlist {
             return;
 
         // Begin loading
+        // eslint-disable-next-line new-cap
         const data = new nReadlines(file);
         let line;
         let lineNumber = 0;
@@ -73,6 +83,10 @@ export default class Playlist {
         }
     }
 
+    /**
+     * Convert this metadata to a saveable string
+     * @return {string} Playlist metadata to save
+     */
     dataToString() {
         // Match ids above
         let r = JSON.stringify([
@@ -88,6 +102,10 @@ export default class Playlist {
         return r.substring(1, r.length - 1);
     }
 
+    /**
+     * Load playlist metadata from first line of save data
+     * @param {string} str Metadata line
+     */
     dataFromString(str) {
         let r = JSON.parse(`[${str}]`);
         this.id = r[ID];
@@ -100,10 +118,17 @@ export default class Playlist {
         this.videoCount = r[VIDEO_COUNT];
     }
 
+    /**
+     * Dump all metadata and video metadata to the
+     * save file for this playlist
+     */
     async save() {
         const file = path.join(config.dataDir, `${this.id}.data`);
         const data = this.dataToString() + '\n' + this.videos.map(video => video.toString()).join('\n');
-        await fs.writeFile(file, data, console.error);
+        await fs.writeFile(file, data, err => {
+            if (err)
+                signale.fatal(err);
+        });
     }
 
     /**
@@ -131,10 +156,11 @@ export default class Playlist {
             // New video: sync data
             if (!this.videoIDs.has(id)) {
                 video.update(vi);
+                signale.debug({ prefix: '  ', message: `New video: id ${id}` });
                 if (config.saveFancyMetadata)
                     video.update(await ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`));
-            }
-            else console.log('Skip video', vi.id) // TODO
+            } else
+                signale.debug({ prefix: '  ', message: `Already have video id: ${id}, skipping...` });
 
             this.videoIDs.delete(id);
         }
@@ -146,6 +172,6 @@ export default class Playlist {
         }
 
         this.videoCount = this.videos.length;
-        this.save();
+        await this.save();
     }
 }
