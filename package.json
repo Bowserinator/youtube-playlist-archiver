@@ -15,7 +15,7 @@
     "node-fetch": "^3.2.8",
     "signale": "^1.4.0",
     "ytdl-core": "^4.11.0",
-    "ytpl": "^2.3.0"
+    "ytpl": "github:Bowserinator/node-ytpl"
   },
   "type": "module",
   "devDependencies": {

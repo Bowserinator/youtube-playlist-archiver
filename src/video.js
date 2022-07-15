@@ -74,7 +74,7 @@ export default class Video {
         this.title = data.title;
         this.author = data.author.name;
         this.channelID = data.author.channelId || data.author.id;
-        this.durationSec = isFullData ? data.lengthSeconds : data.durationSec;
+        this.durationSec = isFullData ? +data.lengthSeconds : +data.durationSec;
         this.duration = formatTimeSec(this.durationSec);
 
         if (isFullData) {

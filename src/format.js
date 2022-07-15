@@ -4,6 +4,7 @@
  * @return {string} HH:MM:SS or MM:SS (if hour is 0)
  */
 export function formatTimeSec(sec) {
+    sec = sec || 0;
     let hours = Math.floor(sec / 3600);
     let minutes = Math.floor((sec - (hours * 3600)) / 60);
     let seconds = sec - (hours * 3600) - (minutes * 60);

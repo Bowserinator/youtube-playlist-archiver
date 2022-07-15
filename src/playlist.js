@@ -147,13 +147,13 @@ export default class Playlist {
 
     /**
      * Update and save to file: Playlist data from youtube download
-     * @param {*} data Data from y
+     * @param {*} data Data from ytpl
      */
     async update(data) {
         this.videos = [];
 
         this.title = data.title;
-        this.description = data.description;
+        this.description = data.description || 'No Description';
         this.lastUpdated = data.lastUpdated;
         this.views = data.views;
         this.author = data.author.name;
@@ -172,7 +172,7 @@ export default class Playlist {
                 video.update(vi);
                 signale.debug({ prefix: '  ', message: `New video: id ${id}` });
                 if (config.saveFancyMetadata)
-                    video.update(await ytdl.getInfo(`https://www.youtube.com/watch?v=${id}`,
+                    video.update(await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${id}`,
                         { requestOptions: { headers: { cookie: config.cookies } } }));
             } else
                 signale.debug({ prefix: '  ', message: `Already have video id: ${id}, skipping...` });
