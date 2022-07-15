@@ -139,6 +139,10 @@ export default class Playlist {
      * save file for this playlist
      */
     async save() {
+        this.videoCount = this.videos.length;
+        this.duration = formatTimeSec(this.videos.map(v => v.durationSec).reduce((a, b) => a + b));
+        this.lastSync = Date.now();
+
         const file = path.join(config.dataDir, `${this.id}.data`);
         const data = this.dataToString() + '\n' + this.videos.map(video => video.toString()).join('\n');
         await fs.writeFile(file, data, err => {
@@ -177,15 +181,31 @@ export default class Playlist {
             // New video: sync data
             if (!this.videoIDs.has(id)) {
                 video.update(vi);
-                if (config.saveFancyMetadata)
-                    video.update(await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${id}`,
-                        { requestOptions: { headers: { cookie: config.cookies } } }));
 
-                let timeElapsed = ((Date.now() - timeLast) / 1000).toFixed(3);
-                signale.debug({ prefix: '  ', message: `New video: id ${id} (${i} / ${data.items.length}, ${timeElapsed}s)` });
+                if (config.saveFancyMetadata) {
+                    let update = async () => {
+                        const t = Date.now();
+                        const i2 = i;
+                        const id2 = id;
+
+                        video.update(await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${id2}`,
+                            { requestOptions: { headers: { cookie: config.cookies } } }));
+
+                        let timeElapsed = ((Date.now() - t) / 1000).toFixed(3);
+                        signale.debug({ prefix: '  ', message: `New video: id ${id2} (${i2} / ${data.items.length}, ${timeElapsed}s)` });
+                    };
+                    (i % config.parallelVideos === 0) ?
+                        await update() : update();
+                } else {
+                    let timeElapsed = ((Date.now() - timeLast) / 1000).toFixed(3);
+                    signale.debug({ prefix: '  ', message: `New video: id ${id} (${i} / ${data.items.length}, ${timeElapsed}s)` });
+                }
             } else
                 signale.debug({ prefix: '  ', message: `Already have video id: ${id}, skipping...` });
 
+            // Write data periodically
+            if (config.writeDataEveryNVideos > -1 && i % config.writeDataEveryNVideos === 0)
+                await this.save();
             i++;
             timeLast = Date.now();
             this.videoIDs.delete(id);
@@ -198,9 +218,6 @@ export default class Playlist {
             this.videos.unshift(this.videoMap[id]);
         }
 
-        this.videoCount = this.videos.length;
-        this.duration = formatTimeSec(this.videos.map(v => v.durationSec).reduce((a, b) => a + b));
-        this.lastSync = Date.now();
         await this.save();
     }
 

@@ -50,6 +50,7 @@ async function downloadAll() {
                 await playlist.update(plData);
                 playlist.writeHTML();
                 signale.complete(`Finished updating playlist ${playlistId}`);
+                createMainPlaylistPage(playlists);
             } else
                 signale.debug(`Skipping playlist ${playlistId}, no update (${plData.lastUpdated})`);
         } catch (e) {
