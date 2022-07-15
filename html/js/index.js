@@ -48,3 +48,60 @@ function setLeftFromData(json) {
 
 // eslint-disable-next-line no-undef
 setLeftFromData(VIDEOS[0]);
+
+
+// Search:
+
+/**
+ * Get id from youtube url, https://stackoverflow.com/a/8260383
+ * @param {string} url Youtube url
+ * @return {string | boolean} ID
+ */
+function youtubeParser(url) {
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[7].length === 11) ? match[7] : false;
+}
+
+const search = document.getElementById('search');
+const MIN_SEARCH_DELAY = 200;
+const playlistItems = [...document.getElementsByClassName('playlist-item')];
+
+let lastInput = 0;
+let callTimeout = null;
+
+/**
+ * Hide elements based on search query
+ * If search query is blank then all elements are shown again
+ */
+function updateSearch() {
+    let query = search.value.trim().toLowerCase();
+    let id = youtubeParser(query);
+    if (id) query = id;
+
+    for (let i = 0; i < playlistItems.length; i++) {
+        // eslint-disable-next-line no-undef
+        const video = VIDEOS[i];
+        if (query.length === 0 || video[ID].toLowerCase().includes(query) ||
+            video[TITLE].toLowerCase().includes(query) ||
+            video[AUTHOR].toLowerCase().includes(query))
+            playlistItems[i].style.display = 'flex';
+        else
+            playlistItems[i].style.display = 'none';
+    }
+}
+
+search.onkeyup =
+search.onchange =
+search.onblur = () => {
+    if (Date.now() - lastInput < MIN_SEARCH_DELAY) {
+        if (!callTimeout) {
+            callTimeout = setTimeout(updateSearch, MIN_SEARCH_DELAY);
+            lastInput = Date.now();
+        }
+    } else {
+        if (callTimeout) clearTimeout(callTimeout);
+        updateSearch();
+        lastInput = Date.now();
+    }
+};
