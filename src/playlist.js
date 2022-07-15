@@ -190,7 +190,7 @@ export default class Playlist {
         }
 
         this.videoCount = this.videos.length;
-        this.duration = formatTimeSec(this.videos.reduce((a, b) => a.durationSec + b.durationSec));
+        this.duration = formatTimeSec(this.videos.map(v => v.durationSec).reduce((a, b) => a + b));
         this.lastSync = Date.now();
         await this.save();
     }
@@ -228,5 +228,23 @@ export default class Playlist {
         fs.writeFile(path.join(config.htmlDir, this.id + '.html'), html, err => {
             if (err) signale.fatal(err);
         });
+    }
+
+    /**
+     * Convert to an HTML string for the main playlists page
+     * @return {string} HTML
+     */
+    toHTML() {
+        return `
+        <div class="playlist-item" onclick="window.location.href='${path.join(config.webDir, this.id + '.html')}'">
+            <div class="duration-wrapper">
+                <img src="${path.join(config.webDir, 'thumb', 'videos', this.videos[0].id + '.jpg') }" class="thumbnail">
+                <span class="duration">${this.duration}</span>
+            </div>
+            <div class="text">
+                <h3>${this.title}</h3>
+                <small class="muted">${this.author} • ${this.lastUpdated} • ${this.deletedVideoCount} deleted videos</small>
+            </div>
+        </div>`;
     }
 }

@@ -1,7 +1,28 @@
 import ytpl from 'ytpl';
 import signale from 'signale';
+import fs from 'fs';
+import path from 'path';
+
 import Playlist from './playlist.js';
 import { config } from '../config.js';
+
+
+/**
+ * Generate the index page of all playlists
+ * @param {Array<Playlist>} playlists Array of playlists
+ */
+function createMainPlaylistPage(playlists) {
+    const HTML_TEMPLATE = fs.readFileSync('./template_all_playlists.html', { encoding: 'utf8', flag: 'r' });
+    fs.writeFile(path.join(config.htmlDir, 'index.html'),
+        HTML_TEMPLATE
+            .replace('%PLAYLIST_ITEMS%', playlists.map(p => p.toHTML()).join('\n'))
+            .replace('%JS_DATA%', `const PLAYLISTS = [${
+                playlists.map(p => `[${p.dataToString()}]`).join(',')
+            }]`),
+        err => {
+            if (err) signale.fatal(err);
+        });
+}
 
 
 /**
@@ -9,9 +30,11 @@ import { config } from '../config.js';
  * Call this periodically
  */
 async function downloadAll() {
+    let playlists = [];
     for (let playlistId of config.playlistIds)
         try {
             const playlist = new Playlist(playlistId);
+            playlists.push(playlist);
             let plData = await ytpl(playlistId, {
                 limit: 1,
                 requestOptions: { headers: { cookie: config.cookies } }
@@ -31,6 +54,7 @@ async function downloadAll() {
         } catch (e) {
             signale.fatal(e);
         }
+    createMainPlaylistPage(playlists);
 }
 
 downloadAll();
