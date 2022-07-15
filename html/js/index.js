@@ -23,7 +23,7 @@ const CHANNEL_ID = 9;
  */
 function setLeftFromData(json) {
     // Auto-link urls and hashtags in description
-    let desc = json[DESC];
+    let desc = json[DESC] || '<i>No description provided</i>';
     desc = desc.replace(URL_REGEX, '<a href="$1">$1</a>');
     desc = desc.replace(HASH_REGEX, '<a href="https://www.youtube.com/hashtag/$1">#$1</a>');
     desc = desc.replaceAll('\n', '<br><br>');

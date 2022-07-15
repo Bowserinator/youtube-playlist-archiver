@@ -161,7 +161,12 @@ export default class Playlist {
         this.author = data.author.name;
         this.authorID = data.author.channelID;
 
+        signale.debug({ prefix: '  ', message: `Playlist name: ${this.title}` });
+
         // Add playlist videos
+        let i = 1;
+        let timeLast = Date.now();
+
         for (let vi of data.items) {
             let id = vi.id;
 
@@ -172,13 +177,17 @@ export default class Playlist {
             // New video: sync data
             if (!this.videoIDs.has(id)) {
                 video.update(vi);
-                signale.debug({ prefix: '  ', message: `New video: id ${id}` });
                 if (config.saveFancyMetadata)
                     video.update(await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${id}`,
                         { requestOptions: { headers: { cookie: config.cookies } } }));
+
+                let timeElapsed = ((Date.now() - timeLast) / 1000).toFixed(3);
+                signale.debug({ prefix: '  ', message: `New video: id ${id} (${i} / ${data.items.length}, ${timeElapsed}s)` });
             } else
                 signale.debug({ prefix: '  ', message: `Already have video id: ${id}, skipping...` });
 
+            i++;
+            timeLast = Date.now();
             this.videoIDs.delete(id);
         }
 
