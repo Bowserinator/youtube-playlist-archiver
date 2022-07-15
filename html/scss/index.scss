@@ -7,7 +7,7 @@ $input-height: 40px;
 $playlist-item-thumbnail-height: 60px;
 $playlist-item-thumbnail-width: calc($playlist-item-thumbnail-height * 120 / 67);
 
-// Value chosen kinda arbritrarily, but is at least 350px + 2 * right padding + playlist thumbnail width
+// Value chosen kinda arbritrarily, but is at least 400px + 2 * right padding + playlist thumbnail width
 $max-channel-name-width: calc(100vw - 600px);
 
 // Colors:
@@ -105,7 +105,7 @@ hr {
         flex-direction: row;
 
         .left {
-            width: 350px;
+            width: 400px;
             height: calc(100vh - $navbar-height);
         }
         .right {

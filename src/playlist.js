@@ -186,7 +186,7 @@ export default class Playlist {
         this.deletedVideoCount = this.videoIDs.size;
         for (let id of this.videoIDs) {
             this.videoMap[id].removed = 1;
-            this.videos.push(this.videoMap[id]);
+            this.videos.unshift(this.videoMap[id]);
         }
 
         this.videoCount = this.videos.length;

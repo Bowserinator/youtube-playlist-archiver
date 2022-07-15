@@ -142,7 +142,7 @@ export default class Video {
      */
     toHTML(i) {
         return `
-        <div class="playlist-item" onclick="setLeftFromData(VIDEOS[${i}])">
+        <div class="playlist-item${this.removed ? ' removed' : ''}" onclick="setLeftFromData(VIDEOS[${i}])">
             <div class="duration-wrapper">
                 <img src="${path.join(config.webDir, 'thumb', 'videos', this.id + '.jpg')}" class="thumbnail">
                 <span class="duration">${this.duration}</span>
