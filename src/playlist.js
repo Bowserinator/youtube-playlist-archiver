@@ -6,6 +6,7 @@ import fs from 'fs';
 
 import Video from './video.js';
 import { config } from '../config.js';
+import { formatTimeSec } from './format.js';
 
 // Array indices for data storage, must match array below
 const ID = 0;
@@ -187,7 +188,7 @@ export default class Playlist {
         }
 
         this.videoCount = this.videos.length;
-        this.duration = this.videos.reduce((a, b) => a.durationSec + b.durationSec);
+        this.duration = formatTimeSec(this.videos.reduce((a, b) => a.durationSec + b.durationSec));
         this.lastSync = Date.now();
         await this.save();
     }

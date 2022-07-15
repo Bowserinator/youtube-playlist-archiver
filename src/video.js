@@ -2,6 +2,7 @@ import signale from 'signale';
 import path from 'path';
 import fs from 'fs';
 
+import { formatTimeSec, undoFormatTime } from './format.js';
 import { config } from '../config.js';
 import downloadAndResize from './thumbnail.js';
 
@@ -16,26 +17,6 @@ const LIKES = 6;
 const VIEWS = 7;
 const UPLOAD_DATE = 8;
 const CHANNEL_ID = 9;
-
-
-function formatTimeSec(sec) {
-    let hours = Math.floor(sec / 3600);
-    let minutes = Math.floor((sec - (hours * 3600)) / 60);
-    let seconds = sec - (hours * 3600) - (minutes * 60);
-
-    if (hours < 10) hours = '0' + hours;
-    if (minutes < 10) minutes = '0' + minutes;
-    if (seconds < 10) seconds = '0' + seconds;
-    let r = minutes + ':' + seconds;
-    if (hours > 0)
-        r = hours + ':' + r;
-    return r;
-}
-
-function undoFormatTime(formattedTime) {
-    let segments = formattedTime.split(':').map(x => +x).reverse();
-    return segments.map((x, i) => x * Math.pow(60, i)).reduce((a, b) => a + b);
-}
 
 
 /**
