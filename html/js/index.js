@@ -39,9 +39,9 @@ function setLeftFromData(json) {
         `https://www.youtube.com/channel/${json[CHANNEL_ID]}` : '';
     document.getElementById('video-data').innerText =
         [
-            `${json[VIEWS]} views`,
+            `${(+json[VIEWS]).toLocaleString('en-US')} views`,
             json[UPLOAD_DATE],
-            `${json[LIKES]} likes`
+            `${(+json[LIKES]).toLocaleString('en-US')} likes`
         ].join(' • ');
     document.getElementById('video-desc').innerHTML = desc;
 }
