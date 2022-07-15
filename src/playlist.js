@@ -215,6 +215,7 @@ export default class Playlist {
         let html = HTML_TEMPLATE;
         html = html
             .replaceAll('%PLAYLIST_NAME%', this.title)
+            .replaceAll('%BASE%', config.webDir)
             .replaceAll('%PLAYLIST_DESCRIPTION%', this.description)
             .replaceAll('%VIDEO_COUNT%', this.videoCount)
             .replaceAll('%VIEW_COUNT%', this.views)

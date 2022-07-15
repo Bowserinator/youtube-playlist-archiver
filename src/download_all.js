@@ -18,7 +18,8 @@ function createMainPlaylistPage(playlists) {
             .replace('%PLAYLIST_ITEMS%', playlists.map(p => p.toHTML()).join('\n'))
             .replace('%JS_DATA%', `const PLAYLISTS = [${
                 playlists.map(p => `[${p.dataToString()}]`).join(',')
-            }]`),
+            }]`)
+            .replace('%BASE%', config.webDir),
         err => {
             if (err) signale.fatal(err);
         });
