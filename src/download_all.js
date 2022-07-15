@@ -24,6 +24,7 @@ async function downloadAll() {
                     requestOptions: { headers: { cookie: config.cookies } }
                 });
                 await playlist.update(plData);
+                playlist.writeHTML();
                 signale.complete(`Finished updating playlist ${playlistId}`);
             } else
                 signale.debug(`Skipping playlist ${playlistId}, no update (${plData.lastUpdated})`);

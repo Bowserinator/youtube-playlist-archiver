@@ -84,6 +84,9 @@ hr {
     .left, .right {
         padding: 24px;
         box-sizing: border-box;
+        word-wrap: break-word;
+        word-break: break-all;
+        word-break: break-word;
     }
 
     .right .header > h1 {
@@ -201,6 +204,9 @@ input[type=text] {
 // Thumbnails
 .thumbnail-large {
     width: 100%;
+    aspect-ratio: 120 / 67;
+    object-fit: contain;
+    background-color: black;
 }
 
 .thumbnail {

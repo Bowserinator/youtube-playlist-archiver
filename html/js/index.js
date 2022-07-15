@@ -1,6 +1,7 @@
+// VIDEOS array set by template
 
 // https://stackoverflow.com/a/29747837
-const URL_REGEX = /(?![^<]*>|[^<>]*<\/)((https?:)\/\/[a-z0-9&#=.\/\-?_]+)/gi;
+const URL_REGEX = /(?![^<]*>|[^<>]*<\/)((https?:)\/\/[a-z0-9&#=./\-?_]+)/gi;
 const HASH_REGEX = /#([A-Za-z0-9_-]*)/gi;
 
 // Array indices to store each of these properties
@@ -16,18 +17,19 @@ const UPLOAD_DATE = 8;
 const CHANNEL_ID = 9;
 
 
-
-
+/**
+ * Set the left side to display data about the current video
+ * @param {*} json Array data of the current video
+ */
 function setLeftFromData(json) {
     // Auto-link urls and hashtags in description
     let desc = json[DESC];
     desc = desc.replace(URL_REGEX, '<a href="$1">$1</a>');
     desc = desc.replace(HASH_REGEX, '<a href="https://www.youtube.com/hashtag/$1">#$1</a>');
-
-    // TODO: thumbnail + channel img
+    desc = desc.replaceAll('\n', '<br><br>');
 
     document.getElementById('video-duration').innerText = json[DURATION];
-    document.getElementById('video-thumbnail').src = `thumb/videos/${json[ID]}.jpg`; // TODO
+    document.getElementById('video-thumbnail').src = `thumb/videos/${json[ID]}.jpg`;
     document.getElementById('channel-img').src = `thumb/users/${json[CHANNEL_ID]}.jpg`;
 
     document.getElementById('video-title').innerText = json[TITLE];
@@ -43,3 +45,6 @@ function setLeftFromData(json) {
         ].join(' • ');
     document.getElementById('video-desc').innerHTML = desc;
 }
+
+// eslint-disable-next-line no-undef
+setLeftFromData(VIDEOS[0]);

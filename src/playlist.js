@@ -8,6 +8,8 @@ import Video from './video.js';
 import { config } from '../config.js';
 import { formatTimeSec } from './format.js';
 
+const HTML_TEMPLATE = fs.readFileSync('./template_playlist.html', { encoding: 'utf8', flag: 'r' });
+
 // Array indices for data storage, must match array below
 const ID = 0;
 const TITLE = 1;
@@ -191,5 +193,40 @@ export default class Playlist {
         this.duration = formatTimeSec(this.videos.reduce((a, b) => a.durationSec + b.durationSec));
         this.lastSync = Date.now();
         await this.save();
+    }
+
+    /**
+     * Write the HTML file for this playlists contents
+     */
+    writeHTML() {
+        /*
+        Variables:
+        %PLAYLIST_NAME%        - string
+        %PLAYLIST_DESCRIPTION% - string
+        %VIDEO_COUNT%          - number
+        %VIEW_COUNT            - number
+        %LAST_UPDATED%         - string
+        %DURATION%             - formatted string
+        %SYNC_DATE%            - formatted string
+        %PLAYLIST_CREATOR%     - string
+        %PLAYLIST_ITEMS%       - HTML string
+        %JS_STUFF%             - JS string for video data + config
+        */
+        let html = HTML_TEMPLATE;
+        html = html
+            .replaceAll('%PLAYLIST_NAME%', this.title)
+            .replaceAll('%PLAYLIST_DESCRIPTION%', this.description)
+            .replaceAll('%VIDEO_COUNT%', this.videoCount)
+            .replaceAll('%VIEW_COUNT%', this.views)
+            .replaceAll('%LAST_UPDATED%', this.lastUpdated)
+            .replaceAll('%DURATION%', this.duration)
+            .replaceAll('%SYNC_DATE%', new Date(this.lastSync).toLocaleString())
+            .replaceAll('%PLAYLIST_CREATOR%', this.author)
+            .replaceAll('%JS_STUFF%', `const VIDEOS = [${this.videos.map(v => `[${v.toString()}]`).join(',')}];`)
+            .replaceAll('%PLAYLIST_ITEMS%', this.videos.map((v, i) => v.toHTML(i)).join('\n'));
+
+        fs.writeFile(path.join(config.htmlDir, this.id + '.html'), html, err => {
+            if (err) signale.fatal(err);
+        });
     }
 }

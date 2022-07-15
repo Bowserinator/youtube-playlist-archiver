@@ -92,23 +92,24 @@ export default class Video {
         if (config.saveThumbnails) {
             // Download video thumbnail
             const thumb = data.thumbnails[0].url;
+            const thumbDir = path.join(config.htmlDir, 'thumb');
 
-            if (!fs.existsSync(config.thumbDir)) {
-                signale.pending({ prefix: '  ', message: `${config.thumbDir} doesn't exist, creating...` });
-                fs.mkdirSync(path.join(config.thumbDir, 'videos'), { recursive: true });
-                fs.mkdirSync(path.join(config.thumbDir, 'users'), { recursive: true });
+            if (!fs.existsSync(thumbDir)) {
+                signale.pending({ prefix: '  ', message: `${thumbDir} doesn't exist, creating...` });
+                fs.mkdirSync(path.join(thumbDir, 'videos'), { recursive: true });
+                fs.mkdirSync(path.join(thumbDir, 'users'), { recursive: true });
             }
 
             if (thumb)
                 downloadAndResize(thumb, config.thumbnails.width, config.thumbnails.quality,
-                    path.join(config.thumbDir, 'videos', this.id + '.jpg'));
+                    path.join(thumbDir, 'videos', this.id + '.jpg'));
 
             // Download channel thumbnail
             if (isFullData) {
                 const channelThumb = data.author.thumbnails[0].url;
                 if (channelThumb)
                     downloadAndResize(channelThumb, config.channelProfile.width, config.channelProfile.quality,
-                        path.join(config.thumbDir, 'users', this.channelID + '.jpg'));
+                        path.join(thumbDir, 'users', this.channelID + '.jpg'));
             }
         }
     }
@@ -132,5 +133,24 @@ export default class Video {
         ].filter(x => x !== undefined);
         let r = JSON.stringify(obj);
         return r.substring(1, r.length - 1);
+    }
+
+    /**
+     * Return an HTML playlist item
+     * @param {number} i Index in the VIDEOS array
+     * @return {string} HTML
+     */
+    toHTML(i) {
+        return `
+        <div class="playlist-item" onclick="setLeftFromData(VIDEOS[${i}])">
+            <div class="duration-wrapper">
+                <img src="${path.join(config.webDir, 'thumb', 'videos', this.id + '.jpg')}" class="thumbnail">
+                <span class="duration">${this.duration}</span>
+            </div>
+            <div class="text">
+                <h3>${this.title}</h3>
+                <small class="muted">${this.author}</small>
+            </div>
+        </div>`;
     }
 }

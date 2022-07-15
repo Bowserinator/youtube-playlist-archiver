@@ -2,6 +2,9 @@
 config.js
 TODO.txt
 
+# HTML output
+out/
+
 # Logs
 logs
 *.log

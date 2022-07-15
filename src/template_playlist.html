@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <meta name="description" content="%PLAYLIST_NAME% - Youtube Playlists">
+    <meta name="author" content="Hellomouse">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Social meta -->
+    <meta property="og:title" content="%PLAYLIST_NAME% - Youtube Playlists">
+    <meta property="og:description" content="Hellomouse automated playlist archive.">
+    <meta property="og:image" content="img/thumbnail.jpg">
+    
+    <title>%PLAYLIST_NAME% - Youtube Playlists</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,400;0,700;1,100;1,400;1,700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/index.css">
+</head>
+
+<body>
+    <nav>
+        <a href="" class="logo-link">
+            <img src="img/logo.png" alt="Hellomouse Logo">
+        </a>
+
+        <input type="text" id="search" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" placeholder="Search in playlist">
+    </nav>
+
+    <div class="container">
+        <div class="left">
+            <div class="duration-wrapper">
+                <img class="thumbnail-large" id="video-thumbnail"
+                    src=""
+                    onerror="this.src='img/missing-video.jpg'">
+                <span class="duration" id="video-duration">X:XX</span>
+            </div>
+
+            <h2 id="video-title" class="video-title">Loading...</h2>
+            <p class="original-video-link small"><a id="video-link" href="">Original video</a></p>
+
+            <img id="channel-img" class="channel-img"
+                src=""
+                onerror="this.src='img/missing-channel.jpg'">
+            <div class="channel-name"><b><a href="" id="channel-name">Loading...</a></b></div>
+
+            <p class="muted small" id="video-data">
+                ? views • Uploaded ? • ? likes
+            </p>
+            <hr>
+            <p class="small" id="video-desc">
+                Loading...
+            </p>
+        </div>
+        <div class="right">
+            <div class="header">
+                <h1>%PLAYLIST_NAME%</h1>
+                <p class="muted small">%VIDEO_COUNT% videos • %VIEW_COUNT% views • %LAST_UPDATED% • %DURATION%<br>Last synced %SYNC_DATE%</p>
+                <p>%PLAYLIST_DESCRIPTION%</p>
+                <hr>
+                <p><b>%PLAYLIST_CREATOR%</b></p>
+                <hr>
+
+                <div class="playlist-items">
+                    %PLAYLIST_ITEMS%
+                    <!--
+                    <div class="playlist-item">
+                        <div class="duration-wrapper">
+                            <img src="https://www.wepc.com/wp-content/uploads/2022/05/Genshin-Impact-Yae-Miko.png" class="thumbnail">
+                            <span class="duration">1:24</span>
+                        </div>
+                        <div class="text">
+                            <h3>Playlist Video Title</h3>
+                            <small class="muted">Channel Name</small>
+                        </div>
+                    </div>
+                    -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+%JS_STUFF%
+    </script>
+    <script src="js/index.js"></script>
+</body>
+</html>
