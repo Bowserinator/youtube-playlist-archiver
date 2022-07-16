@@ -12,7 +12,7 @@ import { config } from '../config.js';
  * @param {Array<Playlist>} playlists Array of playlists
  */
 function createMainPlaylistPage(playlists) {
-    const HTML_TEMPLATE = fs.readFileSync('./template_all_playlists.html', { encoding: 'utf8', flag: 'r' });
+    const HTML_TEMPLATE = fs.readFileSync('./templates/template_all_playlists.html', { encoding: 'utf8', flag: 'r' });
     fs.writeFile(path.join(config.htmlDir, 'index.html'),
         HTML_TEMPLATE
             .replace('%PLAYLIST_ITEMS%', playlists.map(p => p.toHTML()).join('\n'))
@@ -30,7 +30,7 @@ function createMainPlaylistPage(playlists) {
  * Begin downloading all playlists in the config
  * Call this periodically
  */
-async function downloadAll() {
+export default async function downloadAll() {
     let playlists = [];
     for (let playlistId of config.playlistIds)
         try {
@@ -58,5 +58,3 @@ async function downloadAll() {
         }
     createMainPlaylistPage(playlists);
 }
-
-downloadAll();

@@ -8,7 +8,7 @@ import Video from './video.js';
 import { config } from '../config.js';
 import { formatTimeSec } from './format.js';
 
-const HTML_TEMPLATE = fs.readFileSync('./template_playlist.html', { encoding: 'utf8', flag: 'r' });
+const HTML_TEMPLATE = fs.readFileSync('./templates/template_playlist.html', { encoding: 'utf8', flag: 'r' });
 
 // Array indices for data storage, must match array below
 const ID = 0;
@@ -206,7 +206,7 @@ export default class Playlist {
                     signale.debug({ prefix: '  ', message: `Already have video id: ${id}, skipping...` });
 
                 // Write data periodically
-                if (config.writeDataEveryNVideos > -1 && i % config.writeDataEveryNVideos === 0)
+                if (config.writeDataEveryNVideos > 0 && i % config.writeDataEveryNVideos === 0)
                     await this.save();
                 i++;
                 timeLast = Date.now();
@@ -216,9 +216,12 @@ export default class Playlist {
             signale.fatal(e);
 
             // Put back original video array
-            this.videos = originalVideos;
-            await this.save();
-            this.load();
+            // only if not saving backup
+            if (config.writeDataEveryNVideos <= 0) {
+                this.videos = originalVideos;
+                await this.save();
+                this.load();
+            }
             return;
         }
 
