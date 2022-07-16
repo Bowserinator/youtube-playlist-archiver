@@ -2,8 +2,8 @@
 
 // https://stackoverflow.com/a/29747837
 const URL_REGEX = /(?![^<]*>|[^<>]*<\/)((https?:)\/\/[a-z0-9&#=./\-?_]+)/gi;
-const HASH_REGEX = /#([A-Za-z0-9_-]*)/gi;
-const TIMESTAMP_REGEX = /(\s(\d+:\d{2}|\d{1,2}):\d{2}\s)/gi;
+const HASH_REGEX = /#(\S*)/gi;
+const TIMESTAMP_REGEX = /([\s|(](\d+:\d{2}|\d{1,2}):\d{2}(\s|$|\)))/gi;
 
 // Array indices to store each of these properties
 // Should match that of video.js in src/
