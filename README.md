@@ -24,6 +24,8 @@ npm run scss
 
 *Note: this uses a custom fork of ytpl to fix a bug where playlist titles and descriptions were not resolved. Once the original maintainer fixes it the dependencies will be updated*
 
+Next, copy everything in `/html` to your html output folder.
+
 ### Make a Config
 
 Put a `config.js` at the top level, see `config.example.js` for an example config.
@@ -32,4 +34,16 @@ Put a `config.js` at the top level, see `config.example.js` for an example confi
 
 ```
 node index.js
+```
+
+**Manually start download:**
+
+```
+node download.js
+```
+
+**Manually generate HTML:**
+
+```
+node html.js
 ```

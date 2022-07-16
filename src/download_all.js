@@ -11,7 +11,7 @@ import { config } from '../config.js';
  * Generate the index page of all playlists
  * @param {Array<Playlist>} playlists Array of playlists
  */
-function createMainPlaylistPage(playlists) {
+export function createMainPlaylistPage(playlists) {
     const HTML_TEMPLATE = fs.readFileSync('./templates/template_all_playlists.html', { encoding: 'utf8', flag: 'r' });
     fs.writeFile(path.join(config.htmlDir, 'index.html'),
         HTML_TEMPLATE
@@ -30,7 +30,7 @@ function createMainPlaylistPage(playlists) {
  * Begin downloading all playlists in the config
  * Call this periodically
  */
-export default async function downloadAll() {
+export async function downloadAll() {
     let playlists = [];
     for (let playlistId of config.playlistIds)
         try {
