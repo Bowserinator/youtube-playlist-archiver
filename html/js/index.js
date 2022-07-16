@@ -3,6 +3,7 @@
 // https://stackoverflow.com/a/29747837
 const URL_REGEX = /(?![^<]*>|[^<>]*<\/)((https?:)\/\/[a-z0-9&#=./\-?_]+)/gi;
 const HASH_REGEX = /#([A-Za-z0-9_-]*)/gi;
+const TIMESTAMP_REGEX = /(\s(\d+:\d{2}|\d{1,2}):\d{2}\s)/gi;
 
 // Array indices to store each of these properties
 // Should match that of video.js in src/
@@ -26,6 +27,7 @@ function setLeftFromData(json) {
     let desc = json[DESC] || '<i>No description provided</i>';
     desc = desc.replace(URL_REGEX, '<a href="$1">$1</a>');
     desc = desc.replace(HASH_REGEX, '<a href="https://www.youtube.com/hashtag/$1">#$1</a>');
+    desc = desc.replace(TIMESTAMP_REGEX, `<a style="text-decoration: none" href="javascript:none">$1</a>`);
     desc = desc.replaceAll('\n', '<br><br>');
 
     document.getElementById('video-duration').innerText = json[DURATION];

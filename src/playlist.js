@@ -263,15 +263,17 @@ export default class Playlist {
      */
     toHTML() {
         return `
-        <div class="playlist-item" onclick="window.location.href='${path.join(config.webDir, this.id + '.html')}'">
-            <div class="duration-wrapper">
-                <img src="${path.join(config.webDir, 'thumb', 'videos', this.videos[0].id + '.jpg') }" class="thumbnail">
-                <span class="duration">${this.duration}</span>
+        <a class="playlist-a" href="${path.join(config.webDir, this.id + '.html')}">
+            <div class="playlist-item">
+                <div class="duration-wrapper">
+                    <img src="${path.join(config.webDir, 'thumb', 'videos', this.videos[0].id + '.jpg') }" class="thumbnail">
+                    <span class="duration">${this.duration}</span>
+                </div>
+                <div class="text">
+                    <h3>${this.title}</h3>
+                    <small class="muted">${this.author} • ${this.lastUpdated} • ${this.deletedVideoCount} deleted videos</small>
+                </div>
             </div>
-            <div class="text">
-                <h3>${this.title}</h3>
-                <small class="muted">${this.author} • ${this.lastUpdated} • ${this.deletedVideoCount} deleted videos</small>
-            </div>
-        </div>`;
+        </a>`;
     }
 }
