@@ -156,6 +156,7 @@ export default class Playlist {
      * @param {*} data Data from ytpl
      */
     async update(data) {
+        let originalVideos = [...this.videos];
         this.videos = [];
 
         this.title = data.title;
@@ -171,44 +172,54 @@ export default class Playlist {
         let i = 1;
         let timeLast = Date.now();
 
-        for (let vi of data.items) {
-            let id = vi.id;
+        try {
+            for (let vi of data.items) {
+                let id = vi.id;
 
-            let video = this.videoIDs.has(id) ? this.videoMap[id] : new Video(id);
-            this.videos.push(video);
-            video.removed = 0;
+                let video = this.videoIDs.has(id) ? this.videoMap[id] : new Video(id);
+                this.videos.push(video);
+                video.removed = 0;
 
-            // New video: sync data
-            if (!this.videoIDs.has(id)) {
-                video.update(vi);
+                // New video: sync data
+                if (!this.videoIDs.has(id)) {
+                    video.update(vi);
 
-                if (config.saveFancyMetadata) {
-                    let update = async () => {
-                        const t = Date.now();
-                        const i2 = i;
-                        const id2 = id;
+                    if (config.saveFancyMetadata) {
+                        let update = async () => {
+                            const t = Date.now();
+                            const i2 = i;
+                            const id2 = id;
 
-                        video.update(await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${id2}`,
-                            { requestOptions: { headers: { cookie: config.cookies } } }));
+                            video.update(await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${id2}`,
+                                { requestOptions: { headers: { cookie: config.cookies } } }));
 
-                        let timeElapsed = ((Date.now() - t) / 1000).toFixed(3);
-                        signale.debug({ prefix: '  ', message: `New video: id ${id2} (${i2} / ${data.items.length}, ${timeElapsed}s)` });
-                    };
-                    (i % config.parallelVideos === 0) ?
-                        await update() : update();
-                } else {
-                    let timeElapsed = ((Date.now() - timeLast) / 1000).toFixed(3);
-                    signale.debug({ prefix: '  ', message: `New video: id ${id} (${i} / ${data.items.length}, ${timeElapsed}s)` });
-                }
-            } else
-                signale.debug({ prefix: '  ', message: `Already have video id: ${id}, skipping...` });
+                            let timeElapsed = ((Date.now() - t) / 1000).toFixed(3);
+                            signale.debug({ prefix: '  ', message: `New video: id ${id2} (${i2} / ${data.items.length}, ${timeElapsed}s)` });
+                        };
+                        (i % config.parallelVideos === 0) ?
+                            await update() : update();
+                    } else {
+                        let timeElapsed = ((Date.now() - timeLast) / 1000).toFixed(3);
+                        signale.debug({ prefix: '  ', message: `New video: id ${id} (${i} / ${data.items.length}, ${timeElapsed}s)` });
+                    }
+                } else
+                    signale.debug({ prefix: '  ', message: `Already have video id: ${id}, skipping...` });
 
-            // Write data periodically
-            if (config.writeDataEveryNVideos > -1 && i % config.writeDataEveryNVideos === 0)
-                await this.save();
-            i++;
-            timeLast = Date.now();
-            this.videoIDs.delete(id);
+                // Write data periodically
+                if (config.writeDataEveryNVideos > -1 && i % config.writeDataEveryNVideos === 0)
+                    await this.save();
+                i++;
+                timeLast = Date.now();
+                this.videoIDs.delete(id);
+            }
+        } catch (e) {
+            signale.fatal(e);
+
+            // Put back original video array
+            this.videos = originalVideos;
+            await this.save();
+            this.load();
+            return;
         }
 
         // Add removed videos
