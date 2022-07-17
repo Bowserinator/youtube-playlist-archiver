@@ -182,7 +182,7 @@ export default class Playlist {
 
                 // New video: sync data
                 if (!this.videoIDs.has(id)) {
-                    video.update(vi);
+                    await video.update(vi);
 
                     if (config.saveFancyMetadata) {
                         let update = async () => {
@@ -190,7 +190,7 @@ export default class Playlist {
                             const i2 = i;
                             const id2 = id;
 
-                            video.update(await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${id2}`,
+                            await video.update(await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${id2}`,
                                 { requestOptions: { headers: { cookie: config.cookies } } }));
 
                             let timeElapsed = ((Date.now() - t) / 1000).toFixed(3);
