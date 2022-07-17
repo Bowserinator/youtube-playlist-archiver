@@ -196,7 +196,7 @@ export default class Playlist {
                             let timeElapsed = ((Date.now() - t) / 1000).toFixed(3);
                             signale.debug({ prefix: '  ', message: `New video: id ${id2} (${i2} / ${data.items.length}, ${timeElapsed}s)` });
                         };
-                        (i % config.parallelVideos === 0) ?
+                        (i === data.items.length - 1 || i % config.parallelVideos === 0) ?
                             await update() : update();
                     } else {
                         let timeElapsed = ((Date.now() - timeLast) / 1000).toFixed(3);
