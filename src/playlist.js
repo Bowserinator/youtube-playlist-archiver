@@ -45,7 +45,7 @@ export default class Playlist {
         this.videoCount = 0;
 
         this.videos = [];
-        this.videoIDs = new Set();
+        this.videoIDs = {};
         this.videoMap = {};
         this.deletedVideoCount = 0;
         this.duration = '0:00';
@@ -60,7 +60,7 @@ export default class Playlist {
      */
     load() {
         this.videos = [];
-        this.videoIDs = new Set();
+        this.videoIDs = {};
         this.videoMap = {};
 
         if (!fs.existsSync(config.dataDir)) {
@@ -85,7 +85,11 @@ export default class Playlist {
             else {
                 let video = new Video('');
                 video.load(line.toString());
-                this.videoIDs.add(video.id);
+
+                if (!this.videoIDs[video.id])
+                    this.videoIDs[video.id] = 0;
+                this.videoIDs[video.id]++;
+
                 this.videoMap[video.id] = video;
                 this.videos.push(video);
             }
@@ -176,12 +180,12 @@ export default class Playlist {
             for (let vi of data.items) {
                 let id = vi.id;
 
-                let video = this.videoIDs.has(id) ? this.videoMap[id] : new Video(id);
+                let video = this.videoIDs[id] > 0 ? this.videoMap[id] : new Video(id);
                 this.videos.push(video);
                 video.removed = 0;
 
                 // New video: sync data
-                if (!this.videoIDs.has(id)) {
+                if (!this.videoIDs[id] > 0) {
                     await video.update(vi);
 
                     if (config.saveFancyMetadata)
@@ -197,7 +201,8 @@ export default class Playlist {
                     await this.save();
                 i++;
                 timeLast = Date.now();
-                this.videoIDs.delete(id);
+                if (this.videoIDs[id] > 0)
+                    this.videoIDs[id]--;
             }
         } catch (e) {
             signale.fatal(e);
@@ -213,8 +218,10 @@ export default class Playlist {
         }
 
         // Add removed videos
-        this.deletedVideoCount = this.videoIDs.size;
-        for (let id of this.videoIDs) {
+        this.deletedVideoCount = Object.keys(this.videoIDs).filter(k => this.videoIDs[k] > 0).length;
+        for (let id of Object.keys(this.videoIDs)) {
+            if (this.videoIDs[id] <= 0)
+                continue;
             this.videoMap[id].removed = 1;
             this.videos.unshift(this.videoMap[id]);
         }
