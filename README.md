@@ -4,6 +4,8 @@
 
 You know how you have a playlist of your favorite videos, then one gets removed or deleted or privatized and you can never know what it was? This saves relevant metadata from your (public/unlisted) playlists periodically so you can always know what a video was!
 
+*Note: if a video is not available in your geographic region, it may be marked as "deleted"*
+
 ## Install
 
 ### Prerequisites

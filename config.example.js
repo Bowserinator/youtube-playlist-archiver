@@ -54,5 +54,7 @@ export const config = {
     htmlDir: './out/',
 
     // Root path for your web directory
+    // This is prepended to urls, ie "/mydir/playlists/" (should end with a /)
+    // will make all hrefs be like href="/mydir/playlists/<other stuff>"
     webDir: ''
 };
