@@ -32,11 +32,6 @@ export const config = {
     // https://crontab.cronhub.io/
     cronString: '0 4 * * *',
 
-    // If using saveFancyMetadata, how many videos to attempt to request in "parallel"
-    // (async). Youtube rate limits you harder anyways so this doesn't really have a big impact
-    // (Recommended to keep small like <= 5)
-    parallelVideos: 5,
-
     // Backup the data every N videos. Useful ONLY for very large unsynced playlists
     // on the first sync. If > 0, will overwrite the data folder. In the event of an error
     // getting data original data will be lost if this is > 0 and overwritten with partial data

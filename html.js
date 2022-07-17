@@ -8,6 +8,7 @@ signale.pending('Manually generating HTML from data...');
 let playlists = [];
 for (let playlistId of config.playlistIds)
     try {
+        signale.pending(`Writing playlist ${playlistId}...`);
         const playlist = new Playlist(playlistId);
         playlist.writeHTML();
         playlists.push(playlist);

@@ -145,7 +145,7 @@ export default class Playlist {
 
         const file = path.join(config.dataDir, `${this.id}.data`);
         const data = this.dataToString() + '\n' + this.videos.map(video => video.toString()).join('\n');
-        await fs.writeFile(file, data, err => {
+        fs.writeFileSync(file, data, err => {
             if (err)
                 signale.fatal(err);
         });
@@ -184,26 +184,13 @@ export default class Playlist {
                 if (!this.videoIDs.has(id)) {
                     await video.update(vi);
 
-                    if (config.saveFancyMetadata) {
-                        let update = async () => {
-                            const t = Date.now();
-                            const i2 = i;
-                            const id2 = id;
+                    if (config.saveFancyMetadata)
+                        await video.update(await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${id}`,
+                            { requestOptions: { headers: { cookie: config.cookies } } }));
 
-                            await video.update(await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${id2}`,
-                                { requestOptions: { headers: { cookie: config.cookies } } }));
-
-                            let timeElapsed = ((Date.now() - t) / 1000).toFixed(3);
-                            signale.debug({ prefix: '  ', message: `New video: id ${id2} (${i2} / ${data.items.length}, ${timeElapsed}s)` });
-                        };
-                        (i === data.items.length - 1 || i % config.parallelVideos === 0) ?
-                            await update() : update();
-                    } else {
-                        let timeElapsed = ((Date.now() - timeLast) / 1000).toFixed(3);
-                        signale.debug({ prefix: '  ', message: `New video: id ${id} (${i} / ${data.items.length}, ${timeElapsed}s)` });
-                    }
-                } else
-                    signale.debug({ prefix: '  ', message: `Already have video id: ${id}, skipping...` });
+                    let timeElapsed = ((Date.now() - timeLast) / 1000).toFixed(3);
+                    signale.debug({ prefix: '  ', message: `New video: id ${id} (${i} / ${data.items.length}, ${timeElapsed}s)` });
+                }
 
                 // Write data periodically
                 if (config.writeDataEveryNVideos > 0 && i % config.writeDataEveryNVideos === 0)

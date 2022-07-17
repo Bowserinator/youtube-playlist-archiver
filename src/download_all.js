@@ -36,23 +36,16 @@ export async function downloadAll() {
         try {
             const playlist = new Playlist(playlistId);
             playlists.push(playlist);
+
+            signale.debug(`Downloading playlist ${playlistId}`);
             let plData = await ytpl(playlistId, {
-                limit: 1,
+                pages: 999999999999,
                 requestOptions: { headers: { cookie: config.cookies } }
             });
-
-            if (playlist.lastUpdated !== plData.lastUpdated) { // Changed
-                signale.debug(`Downloading playlist ${playlistId} (${playlist.lastUpdated || '<None>'} -> ${plData.lastUpdated})`);
-                plData = await ytpl(playlistId, {
-                    pages: 999999999999,
-                    requestOptions: { headers: { cookie: config.cookies } }
-                });
-                await playlist.update(plData);
-                playlist.writeHTML();
-                signale.complete(`Finished updating playlist ${playlistId}`);
-                createMainPlaylistPage(playlists);
-            } else
-                signale.debug(`Skipping playlist ${playlistId}, no update (${plData.lastUpdated})`);
+            await playlist.update(plData);
+            playlist.writeHTML();
+            signale.complete(`Finished updating playlist ${playlistId}`);
+            createMainPlaylistPage(playlists);
         } catch (e) {
             signale.fatal(e);
         }
