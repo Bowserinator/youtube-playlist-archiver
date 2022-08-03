@@ -181,6 +181,7 @@ export default class Playlist {
                 let id = vi.id;
 
                 let video = this.videoIDs[id] > 0 ? this.videoMap[id] : new Video(id);
+                this.videos.push(video);
                 video.removed = 0;
 
                 // New video: sync data
@@ -197,12 +198,8 @@ export default class Playlist {
                     } catch (e) {
                         signale.fatal('Failed to download video ' + id);
                         signale.fatal(e);
-                        video.removed = 1;
-                        continue;
                     }
                 }
-
-                this.videos.push(video);
 
                 // Write data periodically
                 if (config.writeDataEveryNVideos > 0 && i % config.writeDataEveryNVideos === 0)
