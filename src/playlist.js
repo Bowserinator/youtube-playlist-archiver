@@ -181,20 +181,28 @@ export default class Playlist {
                 let id = vi.id;
 
                 let video = this.videoIDs[id] > 0 ? this.videoMap[id] : new Video(id);
-                this.videos.push(video);
                 video.removed = 0;
 
                 // New video: sync data
                 if (!this.videoIDs[id] > 0) {
                     await video.update(vi);
 
-                    if (config.saveFancyMetadata)
-                        await video.update(await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${id}`,
-                            { requestOptions: { headers: { cookie: config.cookies } } }));
+                    try {
+                        if (config.saveFancyMetadata)
+                            await video.update(await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${id}`,
+                                { requestOptions: { headers: { cookie: config.cookies } } }));
 
-                    let timeElapsed = ((Date.now() - timeLast) / 1000).toFixed(3);
-                    signale.debug({ prefix: '  ', message: `New video: id ${id} (${i} / ${data.items.length}, ${timeElapsed}s)` });
+                        let timeElapsed = ((Date.now() - timeLast) / 1000).toFixed(3);
+                        signale.debug({ prefix: '  ', message: `New video: id ${id} (${i} / ${data.items.length}, ${timeElapsed}s)` });
+                    } catch (e) {
+                        signale.fatal('Failed to download video ' + id);
+                        signale.fatal(e);
+                        video.removed = 1;
+                        continue;
+                    }
                 }
+
+                this.videos.push(video);
 
                 // Write data periodically
                 if (config.writeDataEveryNVideos > 0 && i % config.writeDataEveryNVideos === 0)
