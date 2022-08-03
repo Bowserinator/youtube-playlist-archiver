@@ -36,6 +36,9 @@ function setLeftFromData(json) {
 
     document.getElementById('video-title').innerText = json[TITLE];
     document.getElementById('video-link').href = `https://www.youtube.com/watch?v=${json[ID]}`;
+    document.getElementById('wayback-link').href = `https://web.archive.org/web/20220000000000*/https://www.youtube.com/watch?v=${json[ID]}`;
+    document.getElementById('bb-link').href = `https://search.bilibili.com/all?keyword=${json[TITLE]}`;
+
     document.getElementById('channel-name').innerText = json[AUTHOR];
     document.getElementById('channel-name').href = json[CHANNEL_ID] ?
         `https://www.youtube.com/channel/${json[CHANNEL_ID]}` : '';
