@@ -13,7 +13,7 @@ export default async function downloadAndResize(url, width, quality, dest) {
         throw new Error(`Width must be > 0 (got ${width}px)`);
     quality = Math.max(0, Math.min(100, quality));
 
-    execSync(`wget --quiet "${url}" -O "${dest}"`);
+    execSync(`wget --quiet --content-on-error "${url}" -O "${dest}"`);
     gm(dest)
         .resize(width)
         .quality(quality)
