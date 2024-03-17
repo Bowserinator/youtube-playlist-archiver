@@ -189,10 +189,10 @@ export default class Playlist {
                     await video.update(vi);
 
                     try {
-                        // TODO with cookies
                         if (config.saveFancyMetadata) {
-                            execSync(config.YT_CMD + `--write-info-json --skip-download --dump-json --no-warnings https://www.youtube.com/watch?v=${id} > out/json/video.json`);
-                            let vData = JSON.parse(await fs.readFileSync('out/json/video.json', 'utf8'));
+                            const videoPath = path.join(config.dataDir, 'video.json');
+                            execSync(config.YT_CMD + `--write-info-json --skip-download --dump-json --no-warnings https://www.youtube.com/watch?v=${id} > ${videoPath}`);
+                            let vData = JSON.parse(await fs.readFileSync(videoPath, 'utf8'));
                             await video.update({
                                 videoDetails: {
                                     title: vData.title,

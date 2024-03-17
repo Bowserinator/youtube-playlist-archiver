@@ -40,8 +40,8 @@ export async function downloadAll() {
 
             signale.debug(`Downloading playlist ${playlistId}`);
 
-            const file = `out/json/${playlistId}.json`;
-            const dir = path.resolve('out/json');
+            const file = path.join(config.dataDir, 'json', `${playlistId}.json`);
+            const dir = path.resolve(path.join(config.dataDir, 'json'));
             if (!fs.existsSync(dir))
                 fs.mkdirSync(dir);
 
@@ -76,7 +76,6 @@ export async function downloadAll() {
             playlist.writeHTML();
             signale.complete(`Finished updating playlist ${playlistId}`);
             createMainPlaylistPage(playlists);
-            break; // TODO
         } catch (e) {
             signale.fatal(e);
         }
