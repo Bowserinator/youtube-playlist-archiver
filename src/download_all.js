@@ -1,10 +1,11 @@
-import ytpl from 'ytpl';
 import signale from 'signale';
 import fs from 'fs';
 import path from 'path';
+import { execSync } from 'child_process';
 
 import Playlist from './playlist.js';
 import { config } from '../config.js';
+import { formatDate } from './format.js';
 
 
 /**
@@ -38,14 +39,44 @@ export async function downloadAll() {
             playlists.push(playlist);
 
             signale.debug(`Downloading playlist ${playlistId}`);
-            let plData = await ytpl(playlistId, {
-                pages: 999999999999,
-                requestOptions: { headers: { cookie: config.cookies } }
-            });
+
+            const file = `out/json/${playlistId}.json`;
+            const dir = path.resolve('out/json');
+            if (!fs.existsSync(dir))
+                fs.mkdirSync(dir);
+
+            execSync(config.YT_CMD + `-J --flat-playlist --skip-download --no-warnings https://www.youtube.com/playlist\?list\=${playlistId} > ${file}`);
+            let plData = JSON.parse(await fs.readFileSync(file, 'utf8'));
+            plData = {
+                title: plData.title,
+                description: plData.description,
+                lastUpdated: formatDate(plData.modified_date),
+                views: plData.view_count,
+                author: {
+                    name: plData.uploader,
+                    channelID: plData.uploader_id
+                },
+                items: plData.entries
+                    .filter(d => d.title !== '[Deleted video]')
+                    .map(d => ({
+                        id: d.id,
+                        title: d.title,
+                        durationSec: d.duration,
+                        author: {
+                            name: d.channel,
+                            channelId: d.channel_id || d.uploader_id
+                        },
+                        thumbnails: d.thumbnails,
+                        duration: d.duration
+                    }))
+            };
+
             await playlist.update(plData);
+
             playlist.writeHTML();
             signale.complete(`Finished updating playlist ${playlistId}`);
             createMainPlaylistPage(playlists);
+            break; // TODO
         } catch (e) {
             signale.fatal(e);
         }

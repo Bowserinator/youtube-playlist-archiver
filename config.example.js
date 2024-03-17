@@ -1,4 +1,6 @@
 export const config = {
+    YT_CMD: 'yt-dlp --cookies cookies.txt ', // Must end in a space
+
     // List of playlist ids to watch
     playlistIds: [
         'PLaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',

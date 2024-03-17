@@ -15,7 +15,7 @@ export default async function downloadAndResize(url, width, quality, dest) {
 
     let stream = await fetch(url);
     if (!stream.ok)
-        throw new Error(`Error: ${stream.statusText}`);
+        throw new Error(`Error: ${stream.statusText}, url = ${url}`);
     gm(stream.body)
         .resize(width)
         .quality(quality)

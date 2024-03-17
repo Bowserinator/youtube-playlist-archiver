@@ -1,6 +1,7 @@
 import signale from 'signale';
 import path from 'path';
 import fs from 'fs';
+import { execSync } from 'child_process';
 
 import { formatTimeSec, undoFormatTime } from './format.js';
 import { config } from '../config.js';
@@ -58,7 +59,7 @@ export default class Video {
         this.views = obj[VIEWS] || this.views;
         this.uploadDate = obj[UPLOAD_DATE] || this.uploadDate;
         this.channelID = obj[CHANNEL_ID] || this.channelID;
-        this.durationSec = undoFormatTime(this.duration);
+        this.durationSec = undoFormatTime(this.duration || '0:00');
     }
 
     /**
@@ -106,7 +107,12 @@ export default class Video {
 
             // Download channel thumbnail
             if (isFullData) {
-                const channelThumb = data.author.thumbnails[0].url;
+                const thumbData = execSync(config.YT_CMD + `"https://www.youtube.com/${this.channelID}" --list-thumbnails --no-warnings --playlist-items 0`)
+                    .toString().split('\n');
+                let channelThumb = '';
+                for (let line of thumbData)
+                    if (line.startsWith('avatar_uncropped'))
+                        channelThumb = line.split(' ')[3];
                 if (channelThumb)
                     downloadAndResize(channelThumb, config.channelProfile.width, config.channelProfile.quality,
                         path.join(thumbDir, 'users', this.channelID + '.jpg'));

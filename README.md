@@ -11,6 +11,7 @@ You know how you have a playlist of your favorite videos, then one gets removed 
 ### Prerequisites
 
 - **Node v16**
+- **yt-dlp** (Will be run with `execSync`)
 - **A webserver** to host the static output
 - **graphicsmagick** (See instructions at https://www.npmjs.com/package/gm
      For linux it's `sudo apt-get install -y graphicsmagick`
@@ -24,13 +25,18 @@ npm install
 npm run scss
 ```
 
-*Note: this uses a custom fork of ytpl to fix a bug where playlist titles and descriptions were not resolved. Once the original maintainer fixes it the dependencies will be updated*
+~~*Note: this uses a custom fork of ytpl to fix a bug where playlist titles and descriptions were not resolved. Once the original maintainer fixes it the dependencies will be updated*~~
+
+Uses `yt-dlp` now because `ytpl` is not maintained anymore.
 
 Next, copy everything in `/html` to your html output folder.
 
 ### Make a Config
 
-Put a `config.js` at the top level, see `config.example.js` for an example config.
+Put a `config.js` at the top level, see `config.example.js` for an example config. Also put a `cookies.txt`
+at the top level or edit the config `YT_CMD`.
+
+You can dump cookies with this command: `yt-dlp --cookies-from-browser firefox --cookies cookies`
 
 ## Usage
 

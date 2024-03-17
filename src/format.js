@@ -26,3 +26,14 @@ export function undoFormatTime(formattedTime) {
     let segments = formattedTime.split(':').map(x => +x).reverse();
     return segments.map((x, i) => x * Math.pow(60, i)).reduce((a, b) => a + b);
 }
+
+/**
+ * Add slashes to date string
+ * @param {string} dateStr YYYYMMDD string
+ * @return {string} YYYY/MM/DD
+ */
+export function formatDate(dateStr) {
+    return dateStr.substr(0, 4) + '/' +
+        dateStr.substr(4, 2) + '/' +
+        dateStr.substr(6, 2);
+}

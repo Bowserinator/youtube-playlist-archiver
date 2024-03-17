@@ -1,12 +1,12 @@
 import nReadlines from 'n-readlines';
 import signale from 'signale';
-import ytdl from 'ytdl-core';
 import path from 'path';
 import fs from 'fs';
+import { execSync } from 'child_process';
 
 import Video from './video.js';
 import { config } from '../config.js';
-import { formatTimeSec } from './format.js';
+import { formatTimeSec, formatDate } from './format.js';
 
 const HTML_TEMPLATE = fs.readFileSync('./templates/template_playlist.html', { encoding: 'utf8', flag: 'r' });
 
@@ -189,9 +189,26 @@ export default class Playlist {
                     await video.update(vi);
 
                     try {
-                        if (config.saveFancyMetadata)
-                            await video.update(await ytdl.getBasicInfo(`https://www.youtube.com/watch?v=${id}`,
-                                { requestOptions: { headers: { cookie: config.cookies } } }));
+                        // TODO with cookies
+                        if (config.saveFancyMetadata) {
+                            execSync(config.YT_CMD + `--write-info-json --skip-download --dump-json --no-warnings https://www.youtube.com/watch?v=${id} > out/json/video.json`);
+                            let vData = JSON.parse(await fs.readFileSync('out/json/video.json', 'utf8'));
+                            await video.update({
+                                videoDetails: {
+                                    title: vData.title,
+                                    author: {
+                                        name: vData.channel,
+                                        channelId: vData.uploader_id
+                                    },
+                                    durationSec: vData.duration,
+                                    description: vData.description,
+                                    likes: vData.like_count,
+                                    viewCount: vData.view_count,
+                                    uploadDate: formatDate(vData.upload_date),
+                                    thumbnails: vData.thumbnails
+                                }
+                            });
+                        }
 
                         let timeElapsed = ((Date.now() - timeLast) / 1000).toFixed(3);
                         signale.debug({ prefix: '  ', message: `New video: id ${id} (${i} / ${data.items.length}, ${timeElapsed}s)` });
