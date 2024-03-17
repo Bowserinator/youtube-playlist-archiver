@@ -201,6 +201,7 @@ export default class Playlist {
                                         channelId: vData.uploader_id
                                     },
                                     durationSec: vData.duration,
+                                    lengthSeconds: vData.duration,
                                     description: vData.description,
                                     likes: vData.like_count,
                                     viewCount: vData.view_count,
