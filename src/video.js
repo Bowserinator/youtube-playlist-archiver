@@ -74,7 +74,7 @@ export default class Video {
 
         this.title = data.title;
         this.author = data.author.name;
-        this.channelID = data.author.channelId || data.author.id;
+        this.channelID = data.author.channelId;
         this.durationSec = isFullData ? +data.lengthSeconds : +data.durationSec;
         this.duration = formatTimeSec(this.durationSec);
 
@@ -107,12 +107,13 @@ export default class Video {
 
             // Download channel thumbnail
             if (isFullData) {
-                const thumbData = execSync(config.YT_CMD + `"https://www.youtube.com/${this.channelID}" --list-thumbnails --no-warnings --playlist-items 0`)
+                const thumbData = execSync(config.YT_CMD + `"https://www.youtube.com/${data.author.id}" --list-thumbnails --no-warnings --playlist-items 0`)
                     .toString().split('\n');
                 let channelThumb = '';
                 for (let line of thumbData)
                     if (line.startsWith('avatar_uncropped'))
                         channelThumb = line.split(' ')[3];
+
                 if (channelThumb)
                     downloadAndResize(channelThumb, config.channelProfile.width, config.channelProfile.quality,
                         path.join(thumbDir, 'users', this.channelID + '.jpg'));

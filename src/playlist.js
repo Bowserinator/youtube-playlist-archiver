@@ -198,7 +198,8 @@ export default class Playlist {
                                     title: vData.title,
                                     author: {
                                         name: vData.channel,
-                                        channelId: vData.uploader_id
+                                        channelId: vData.channel_id,
+                                        id: vData.author_id
                                     },
                                     durationSec: vData.duration,
                                     lengthSeconds: vData.duration,
@@ -283,9 +284,7 @@ export default class Playlist {
             .replaceAll('%JS_STUFF%', `const VIDEOS = [${this.videos.map(v => `[${v.toString()}]`).join(',')}];`)
             .replaceAll('%PLAYLIST_ITEMS%', this.videos.map((v, i) => v.toHTML(i)).join('\n'));
 
-        fs.writeFile(path.join(config.htmlDir, this.id + '.html'), html, err => {
-            if (err) signale.fatal(err);
-        });
+        fs.writeFileSync(path.join(config.htmlDir, this.id + '.html'), html);
     }
 
     /**

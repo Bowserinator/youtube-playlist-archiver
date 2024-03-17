@@ -1,5 +1,5 @@
 import gm from 'gm';
-import fetch from 'node-fetch';
+import { execSync } from 'child_process';
 
 /**
  * Download an image and resize it to a JPG before saving
@@ -13,10 +13,8 @@ export default async function downloadAndResize(url, width, quality, dest) {
         throw new Error(`Width must be > 0 (got ${width}px)`);
     quality = Math.max(0, Math.min(100, quality));
 
-    let stream = await fetch(url);
-    if (!stream.ok)
-        throw new Error(`Error: ${stream.statusText}, url = ${url}`);
-    gm(stream.body)
+    execSync(`wget --quiet "${url}" -O "${dest}"`);
+    gm(dest)
         .resize(width)
         .quality(quality)
         .write(dest, err => {

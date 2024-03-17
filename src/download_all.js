@@ -64,7 +64,8 @@ export async function downloadAll() {
                         durationSec: d.duration,
                         author: {
                             name: d.channel,
-                            channelId: d.channel_id || d.uploader_id
+                            channelId: d.channel_id,
+                            id: d.author_id
                         },
                         thumbnails: d.thumbnails,
                         duration: d.duration
@@ -73,7 +74,7 @@ export async function downloadAll() {
 
             await playlist.update(plData);
 
-            playlist.writeHTML();
+            await playlist.writeHTML();
             signale.complete(`Finished updating playlist ${playlistId}`);
             createMainPlaylistPage(playlists);
         } catch (e) {
