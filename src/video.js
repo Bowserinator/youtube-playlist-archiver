@@ -106,7 +106,7 @@ export default class Video {
                     path.join(thumbDir, 'videos', this.id + '.jpg'));
 
             // Download channel thumbnail
-            if (isFullData) {
+            if (isFullData && data.author?.id) {
                 const thumbData = execSync(config.YT_CMD + `"https://www.youtube.com/${data.author.id}" --list-thumbnails --no-warnings --playlist-items 0`)
                     .toString().split('\n');
                 let channelThumb = '';
