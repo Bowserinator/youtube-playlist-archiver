@@ -57,7 +57,7 @@ export async function downloadAll() {
                     channelID: plData.uploader_id
                 },
                 items: plData.entries
-                    .filter(d => d.title !== '[Deleted video]')
+                    .filter(d => d.title !== '[Deleted video]' && !d.title !== '[Private video]')
                     .map(d => ({
                         id: d.id,
                         title: d.title,
